@@ -1,0 +1,187 @@
+{
+  "app": {
+    "name": "TravelCraft",
+    "tagline": "AI 기반 여행 계획"
+  },
+  "navigation": {
+    "home": "홈",
+    "myItineraries": "내 여행 일정",
+    "destinations": "여행지",
+    "about": "소개"
+  },
+  "hero": {
+    "title": "다음 여행지를",
+    "titleHighlight": "발견하세요",
+    "subtitle": "AI가 당신을 위한 완벽한 여행 일정을 만들어드립니다. 개인 맞춤 추천, 현지 정보, 그리고 당신의 관심사와 예산에 맞춘 상세한 일일 계획을 받아보세요."
+  },
+  "features": {
+    "title": "왜 TravelCraft를 선택해야 할까요?",
+    "aiPowered": {
+      "title": "AI 기반 계획",
+      "description": "우리의 고급 AI가 수천 개의 여행 리소스를 분석하여 당신만을 위한 개인 맞춤 여행 일정을 만들어드립니다."
+    },
+    "localInsights": {
+      "title": "현지 정보",
+      "description": "여행 블로그, 동영상, 현지 추천을 통해 내부자 팁과 숨겨진 보석 같은 장소들을 발견하세요."
+    },
+    "budgetFriendly": {
+      "title": "예산 친화적",
+      "description": "각 여행지에 대한 비용 분석과 절약 팁이 포함된 당신의 예산에 맞춘 계획을 제공합니다."
+    }
+  },
+  "form": {
+    "title": "완벽한 여행을 계획하세요",
+    "subtitle": "꿈의 여행지에 대해 알려주시면 개인 맞춤 여행 일정을 만들어드리겠습니다",
+    "destination": {
+      "label": "어디로 가고 싶으신가요?",
+      "placeholder": "예: 파리, 프랑스 또는 도쿄, 일본",
+      "error": "여행지는 최소 2글자 이상이어야 합니다"
+    },
+    "duration": {
+      "label": "기간 (일)",
+      "error": "기간은 1일에서 30일 사이여야 합니다"
+    },
+    "travelers": {
+      "label": "여행자 수",
+      "error": "여행자 수는 1명에서 20명 사이여야 합니다"
+    },
+    "budget": {
+      "label": "예산 수준",
+      "budget": "절약형",
+      "midRange": "중급",
+      "luxury": "럭셔리",
+      "budgetDesc": "$50-100/일",
+      "midRangeDesc": "$100-250/일",
+      "luxuryDesc": "$250+/일"
+    },
+    "interests": {
+      "label": "무엇에 관심이 있으신가요? (해당하는 모든 항목 선택)",
+      "error": "최소 하나의 관심사를 선택해야 합니다",
+      "culture": "문화 & 역사",
+      "adventure": "모험 & 야외활동",
+      "food": "음식 & 요리",
+      "nightlife": "나이트라이프 & 엔터테인먼트",
+      "art": "예술 & 박물관",
+      "nature": "자연 & 야생동물",
+      "beach": "해변 & 휴식",
+      "shopping": "쇼핑",
+      "photography": "사진촬영",
+      "local": "현지 체험"
+    },
+    "submit": "내 여행 일정 만들기",
+    "generating": "여행 일정 생성 중..."
+  },
+  "loading": {
+    "title": "완벽한 여행 일정을 만들고 있습니다",
+    "subtitle": "정보를 수집하고 개인 맞춤 여행 계획을 작성하는 동안 잠시만 기다려 주세요",
+    "progress": "진행률",
+    "steps": {
+      "analyzing": {
+        "title": "여행지 분석 중",
+        "description": "여행지와 선호사항을 처리하고 있습니다"
+      },
+      "scraping": {
+        "title": "정보 수집 중",
+        "description": "여행 웹사이트와 블로그에서 데이터를 수집하고 있습니다"
+      },
+      "youtube": {
+        "title": "동영상 콘텐츠 검색 중",
+        "description": "관련 여행 동영상과 브이로그를 검색하고 있습니다"
+      },
+      "generating": {
+        "title": "여행 일정 생성 중",
+        "description": "AI가 개인 맞춤 여행 계획을 작성하고 있습니다"
+      }
+    },
+    "timeEstimate": "보통 30-60초 정도 소요됩니다. 기다려 주셔서 감사합니다!"
+  },
+  "itinerary": {
+    "title": "여행 일정",
+    "days": "일",
+    "travelers": "여행자",
+    "share": "공유",
+    "export": "내보내기",
+    "edit": "편집",
+    "planAnother": "다른 여행 계획하기",
+    "overview": {
+      "bestTime": "방문하기 좋은 시기",
+      "attractions": "주요 명소",
+      "activities": "활동",
+      "attractionsPlanned": "개의 명소가 계획됨",
+      "activitiesIncluded": "개의 활동이 포함됨"
+    },
+    "daily": {
+      "title": "일일 여행 일정",
+      "day": "일차",
+      "transportation": "교통수단",
+      "meals": "식당 추천",
+      "notes": "오늘의 메모"
+    },
+    "sections": {
+      "topAttractions": "주요 명소",
+      "budgetOverview": "예산 개요",
+      "localTips": "현지 팁 & 정보"
+    },
+    "budget": {
+      "dailyRange": "일일 예산 범위",
+      "breakdown": "지출 분석",
+      "accommodation": "숙박",
+      "food": "음식",
+      "transportation": "교통",
+      "activities": "활동"
+    },
+    "mealTypes": {
+      "breakfast": "아침식사",
+      "lunch": "점심식사",
+      "dinner": "저녁식사",
+      "snack": "간식"
+    }
+  },
+  "error": {
+    "title": "앗! 문제가 발생했습니다",
+    "tryAgain": "다시 시도",
+    "missingFields": "필수 항목이 누락되었습니다",
+    "invalidDuration": "기간은 1일에서 30일 사이여야 합니다",
+    "invalidTravelers": "여행자 수는 1명에서 20명 사이여야 합니다",
+    "invalidBudget": "잘못된 예산 수준입니다",
+    "noInterests": "최소 하나의 관심사를 선택해야 합니다",
+    "generateFailed": "여행 일정 생성에 실패했습니다. 다시 시도해 주세요.",
+    "networkError": "네트워크 오류입니다. 연결을 확인하고 다시 시도해 주세요."
+  },
+  "footer": {
+    "description": "AI로 개인 맞춤 여행 일정을 만드세요. 당신의 관심사와 예산에 맞춘 놀라운 여행지, 현지 체험, 숨겨진 보석 같은 장소들을 발견하세요.",
+    "madeWith": "전 세계 여행자들을 위해",
+    "forTravelers": "사랑으로 만들어졌습니다",
+    "features": "기능",
+    "featuresList": {
+      "aiPowered": "AI 기반 여행 일정",
+      "localInsights": "현지 정보",
+      "budgetPlanning": "예산 계획",
+      "visualContent": "시각적 콘텐츠",
+      "exportShare": "내보내기 & 공유"
+    },
+    "support": "지원",
+    "supportLinks": {
+      "helpCenter": "도움말 센터",
+      "contact": "문의하기",
+      "privacy": "개인정보 보호정책",
+      "terms": "서비스 약관"
+    },
+    "copyright": "모든 권리 보유."
+  },
+  "language": {
+    "selector": "언어",
+    "current": "현재 언어"
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "save": "저장",
+    "cancel": "취소",
+    "close": "닫기",
+    "next": "다음",
+    "previous": "이전",
+    "yes": "예",
+    "no": "아니오",
+    "ok": "확인"
+  }
+}

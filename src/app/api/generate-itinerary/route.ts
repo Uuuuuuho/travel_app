@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate input
-    const { destination, duration, travelers, budget, interests } = body;
+    const { destination, duration, travelers, budget, interests, language, locale } = body;
     
     if (!destination || !duration || !travelers || !budget || !interests) {
       return NextResponse.json(
@@ -44,20 +44,50 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate the itinerary
-    const itinerary = await travelPlannerService.generateCompleteItinerary({
-      destination,
-      duration,
-      travelers,
-      budget,
-      interests,
-    });
+    try {
+      const itinerary = await travelPlannerService.generateCompleteItinerary({
+        destination,
+        duration,
+        travelers,
+        budget,
+        interests,
+        language: language || 'en',
+        locale: locale || 'en-US',
+      });
 
-    return NextResponse.json(itinerary);
+      return NextResponse.json(itinerary);
+    } catch (generationError) {
+      console.error('Error generating itinerary:', generationError);
+
+      // Provide more specific error messages based on the error type
+      let errorMessage = 'Failed to generate itinerary. Please try again.';
+
+      if (generationError instanceof Error) {
+        if (generationError.message.includes('API key')) {
+          errorMessage = 'AI service is temporarily unavailable. Please try again later.';
+        } else if (generationError.message.includes('rate limit')) {
+          errorMessage = 'Service is busy. Please wait a moment and try again.';
+        } else if (generationError.message.includes('network')) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        }
+      }
+
+      return NextResponse.json(
+        {
+          error: errorMessage,
+          details: process.env.NODE_ENV === 'development' ? generationError.message : undefined
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error('Error generating itinerary:', error);
-    
+    console.error('Unexpected error in API route:', error);
+
     return NextResponse.json(
-      { error: 'Failed to generate itinerary. Please try again.' },
+      {
+        error: 'An unexpected error occurred. Please try again.',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     );
   }

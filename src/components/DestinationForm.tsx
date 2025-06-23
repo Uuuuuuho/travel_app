@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import { MapPin, Calendar, Users, Loader2 } from 'lucide-react';
 
 const destinationSchema = z.object({
@@ -21,21 +22,25 @@ interface DestinationFormProps {
   isLoading?: boolean;
 }
 
-const interestOptions = [
-  'Culture & History',
-  'Adventure & Outdoor',
-  'Food & Cuisine',
-  'Nightlife & Entertainment',
-  'Art & Museums',
-  'Nature & Wildlife',
-  'Beach & Relaxation',
-  'Shopping',
-  'Photography',
-  'Local Experiences',
-];
+// Interest options will be translated dynamically
 
 export default function DestinationForm({ onSubmit, isLoading = false }: DestinationFormProps) {
+  const { t } = useTranslation();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+
+  // Get translated interest options
+  const interestOptions = [
+    { key: 'culture', label: t('form.interests.culture') },
+    { key: 'adventure', label: t('form.interests.adventure') },
+    { key: 'food', label: t('form.interests.food') },
+    { key: 'nightlife', label: t('form.interests.nightlife') },
+    { key: 'art', label: t('form.interests.art') },
+    { key: 'nature', label: t('form.interests.nature') },
+    { key: 'beach', label: t('form.interests.beach') },
+    { key: 'shopping', label: t('form.interests.shopping') },
+    { key: 'photography', label: t('form.interests.photography') },
+    { key: 'local', label: t('form.interests.local') },
+  ];
 
   const {
     register,
@@ -53,11 +58,11 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
     },
   });
 
-  const handleInterestToggle = (interest: string) => {
-    const newInterests = selectedInterests.includes(interest)
-      ? selectedInterests.filter(i => i !== interest)
-      : [...selectedInterests, interest];
-    
+  const handleInterestToggle = (interestKey: string) => {
+    const newInterests = selectedInterests.includes(interestKey)
+      ? selectedInterests.filter(i => i !== interestKey)
+      : [...selectedInterests, interestKey];
+
     setSelectedInterests(newInterests);
     setValue('interests', newInterests);
   };
@@ -70,10 +75,10 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Plan Your Perfect Trip
+          {t('form.title')}
         </h1>
         <p className="text-gray-600">
-          Tell us about your dream destination and we'll create a personalized itinerary for you
+          {t('form.subtitle')}
         </p>
       </div>
 
@@ -82,17 +87,17 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <MapPin className="inline w-4 h-4 mr-1" />
-            Where do you want to go?
+            {t('form.destination.label')}
           </label>
           <input
             {...register('destination')}
             type="text"
-            placeholder="e.g., Paris, France or Tokyo, Japan"
+            placeholder={t('form.destination.placeholder')}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={isLoading}
           />
           {errors.destination && (
-            <p className="mt-1 text-sm text-red-600">{errors.destination.message}</p>
+            <p className="mt-1 text-sm text-red-600">{t('form.destination.error')}</p>
           )}
         </div>
 
@@ -101,7 +106,7 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Calendar className="inline w-4 h-4 mr-1" />
-              Duration (days)
+              {t('form.duration.label')}
             </label>
             <input
               {...register('duration', { valueAsNumber: true })}
@@ -112,14 +117,14 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
               disabled={isLoading}
             />
             {errors.duration && (
-              <p className="mt-1 text-sm text-red-600">{errors.duration.message}</p>
+              <p className="mt-1 text-sm text-red-600">{t('form.duration.error')}</p>
             )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Users className="inline w-4 h-4 mr-1" />
-              Number of travelers
+              {t('form.travelers.label')}
             </label>
             <input
               {...register('travelers', { valueAsNumber: true })}
@@ -130,7 +135,7 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
               disabled={isLoading}
             />
             {errors.travelers && (
-              <p className="mt-1 text-sm text-red-600">{errors.travelers.message}</p>
+              <p className="mt-1 text-sm text-red-600">{t('form.travelers.error')}</p>
             )}
           </div>
         </div>
@@ -138,7 +143,7 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
         {/* Budget */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Budget Level
+            {t('form.budget.label')}
           </label>
           <div className="grid grid-cols-3 gap-3">
             {(['budget', 'mid-range', 'luxury'] as const).map((option) => (
@@ -155,11 +160,15 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
                     ? 'border-blue-500 bg-blue-50 text-blue-700'
                     : 'border-gray-300 hover:border-gray-400'
                 }`}>
-                  <div className="font-medium capitalize">{option.replace('-', ' ')}</div>
+                  <div className="font-medium">
+                    {option === 'budget' && t('form.budget.budget')}
+                    {option === 'mid-range' && t('form.budget.midRange')}
+                    {option === 'luxury' && t('form.budget.luxury')}
+                  </div>
                   <div className="text-xs text-gray-500 mt-1">
-                    {option === 'budget' && '$50-100/day'}
-                    {option === 'mid-range' && '$100-250/day'}
-                    {option === 'luxury' && '$250+/day'}
+                    {option === 'budget' && t('form.budget.budgetDesc')}
+                    {option === 'mid-range' && t('form.budget.midRangeDesc')}
+                    {option === 'luxury' && t('form.budget.luxuryDesc')}
                   </div>
                 </div>
               </label>
@@ -170,27 +179,27 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
         {/* Interests */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            What interests you? (Select all that apply)
+            {t('form.interests.label')}
           </label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {interestOptions.map((interest) => (
               <button
-                key={interest}
+                key={interest.key}
                 type="button"
-                onClick={() => handleInterestToggle(interest)}
+                onClick={() => handleInterestToggle(interest.key)}
                 disabled={isLoading}
                 className={`p-2 text-sm border rounded-lg transition-colors ${
-                  selectedInterests.includes(interest)
+                  selectedInterests.includes(interest.key)
                     ? 'border-blue-500 bg-blue-50 text-blue-700'
                     : 'border-gray-300 hover:border-gray-400'
                 }`}
               >
-                {interest}
+                {interest.label}
               </button>
             ))}
           </div>
           {errors.interests && (
-            <p className="mt-1 text-sm text-red-600">{errors.interests.message}</p>
+            <p className="mt-1 text-sm text-red-600">{t('form.interests.error')}</p>
           )}
         </div>
 
@@ -203,10 +212,10 @@ export default function DestinationForm({ onSubmit, isLoading = false }: Destina
           {isLoading ? (
             <>
               <Loader2 className="inline w-4 h-4 mr-2 animate-spin" />
-              Generating Your Itinerary...
+              {t('form.generating')}
             </>
           ) : (
-            'Create My Itinerary'
+            t('form.submit')
           )}
         </button>
       </form>

@@ -5,13 +5,16 @@ TravelCraft is a comprehensive travel planning application that uses artificial 
 ## Features
 
 - **AI-Powered Itinerary Generation**: Uses OpenAI's GPT models to create detailed travel plans
+- **Multilingual Support**: Full internationalization with 6 languages (English, Spanish, French, German, Japanese, Korean)
+- **Cultural Adaptation**: AI generates culturally relevant content for each language
 - **Web Scraping**: Automatically gathers travel information from various travel websites and blogs
 - **YouTube Integration**: Analyzes travel videos and vlogs for local insights and recommendations
 - **Image Search**: Fetches relevant destination images from Unsplash and Google Images
-- **Budget Planning**: Provides cost breakdowns and budget-appropriate recommendations
+- **Budget Planning**: Provides cost breakdowns and budget-appropriate recommendations with local currency formatting
 - **Interactive UI**: Clean, modern interface with day-by-day itinerary display
 - **Export Functionality**: Save and export itineraries in various formats
 - **Local Storage**: Save your favorite itineraries locally
+- **Localized Search**: Web scraping and YouTube searches performed in user's selected language
 
 ## Tech Stack
 
@@ -51,46 +54,29 @@ pnpm install
 ```
 
 3. Set up environment variables:
-Create a `.env.local` file in the root directory and add your API keys:
+```bash
+cp .env.example .env.local
+```
+Then edit `.env.local` and add your API keys.
 
+**Quick start**: At minimum, add your OpenAI API key:
 ```env
-# Required
 OPENAI_API_KEY=your_openai_api_key_here
-YOUTUBE_API_KEY=your_youtube_api_key_here
-
-# Optional (for enhanced functionality)
-GOOGLE_SEARCH_API_KEY=your_google_search_api_key_here
-GOOGLE_SEARCH_ENGINE_ID=your_search_engine_id_here
-UNSPLASH_ACCESS_KEY=your_unsplash_access_key_here
 ```
 
-## Getting API Keys
+> 📋 **Need detailed setup help?** See [SETUP.md](SETUP.md) for complete API configuration instructions and troubleshooting.
 
-### OpenAI API Key (Required)
-1. Go to [OpenAI Platform](https://platform.openai.com/)
-2. Sign up or log in to your account
-3. Navigate to API Keys section
-4. Create a new API key
-5. Copy the key to your `.env.local` file
+## API Configuration
 
-### YouTube Data API Key (Required)
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing one
-3. Enable the YouTube Data API v3
-4. Create credentials (API Key)
-5. Copy the key to your `.env.local` file
+For detailed API setup instructions, see [SETUP.md](SETUP.md).
 
-### Google Custom Search API (Optional)
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Enable the Custom Search API
-3. Create an API key
-4. Set up a Custom Search Engine at [Google CSE](https://cse.google.com/)
-5. Copy both the API key and Search Engine ID to your `.env.local` file
+**Quick reference**:
+- **OpenAI API** (Required): [Get key here](https://platform.openai.com/)
+- **YouTube Data API** (Optional): [Google Cloud Console](https://console.cloud.google.com/)
+- **Google Search API** (Optional): [Google Cloud Console](https://console.cloud.google.com/)
+- **Unsplash API** (Optional): [Unsplash Developers](https://unsplash.com/developers)
 
-### Unsplash API (Optional)
-1. Go to [Unsplash Developers](https://unsplash.com/developers)
-2. Create a new application
-3. Copy the Access Key to your `.env.local` file
+> ⚠️ **Note**: The app works with just OpenAI API key. Other services enhance functionality but aren't required.
 
 ## Running the Application
 
@@ -107,11 +93,21 @@ pnpm dev
 
 ## Usage
 
-1. **Enter Destination**: Type your desired travel destination (e.g., "Paris, France")
-2. **Set Preferences**: Choose duration, number of travelers, budget level, and interests
-3. **Generate Itinerary**: Click "Create My Itinerary" and wait for AI to process
-4. **Review Results**: Browse your personalized day-by-day itinerary
-5. **Export/Share**: Save or share your itinerary using the provided options
+1. **Select Language**: Choose your preferred language from the language selector in the header
+2. **Enter Destination**: Type your desired travel destination (e.g., "Paris, France")
+3. **Set Preferences**: Choose duration, number of travelers, budget level, and interests
+4. **Generate Itinerary**: Click "Create My Itinerary" and wait for AI to process
+5. **Review Results**: Browse your personalized day-by-day itinerary in your selected language
+6. **Export/Share**: Save or share your itinerary using the provided options
+
+### Language Support
+
+The application automatically:
+- Translates all UI elements to your selected language
+- Generates AI content in your chosen language with cultural context
+- Searches for travel information in your target language
+- Formats dates, currencies, and numbers according to your locale
+- Provides culturally relevant recommendations
 
 ## Project Structure
 
@@ -152,6 +148,29 @@ src/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+## Internationalization
+
+TravelCraft supports multiple languages with comprehensive localization:
+
+### Supported Languages
+- **English (en)** - Default
+- **Spanish (es)** - Español
+- **French (fr)** - Français
+- **German (de)** - Deutsch
+- **Japanese (ja)** - 日本語
+- **Korean (ko)** - 한국어
+
+### Features
+- Complete UI translation
+- AI-generated content in user's language
+- Cultural context adaptation
+- Localized date/currency formatting
+- Language-specific web scraping
+- Regional YouTube content
+
+### Adding New Languages
+See [docs/INTERNATIONALIZATION.md](docs/INTERNATIONALIZATION.md) for detailed instructions on adding new languages.
+
 ## Testing
 
 Run the test suite:
@@ -161,6 +180,15 @@ npm test
 yarn test
 # or
 pnpm test
+```
+
+Test specific features:
+```bash
+# Test internationalization
+npm test i18n.test.ts
+
+# Test services
+npm test services.test.ts
 ```
 
 ## Deployment

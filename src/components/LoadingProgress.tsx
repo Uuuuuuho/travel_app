@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Loader2, MapPin, Youtube, Globe, Sparkles, CheckCircle } from 'lucide-react';
 import { GenerationProgress } from '@/types';
 
@@ -8,36 +9,40 @@ interface LoadingProgressProps {
   progress?: GenerationProgress;
 }
 
-const steps = [
-  {
-    id: 'analyzing',
-    title: 'Analyzing Destination',
-    description: 'Processing your destination and preferences',
-    icon: MapPin,
-  },
-  {
-    id: 'scraping',
-    title: 'Gathering Information',
-    description: 'Collecting data from travel websites and blogs',
-    icon: Globe,
-  },
-  {
-    id: 'youtube',
-    title: 'Finding Video Content',
-    description: 'Searching for relevant travel videos and vlogs',
-    icon: Youtube,
-  },
-  {
-    id: 'generating',
-    title: 'Creating Itinerary',
-    description: 'AI is crafting your personalized travel plan',
-    icon: Sparkles,
-  },
-];
+// Steps will be translated dynamically
 
 export default function LoadingProgress({ progress }: LoadingProgressProps) {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+
+  // Get translated steps
+  const steps = [
+    {
+      id: 'analyzing',
+      title: t('loading.steps.analyzing.title'),
+      description: t('loading.steps.analyzing.description'),
+      icon: MapPin,
+    },
+    {
+      id: 'scraping',
+      title: t('loading.steps.scraping.title'),
+      description: t('loading.steps.scraping.description'),
+      icon: Globe,
+    },
+    {
+      id: 'youtube',
+      title: t('loading.steps.youtube.title'),
+      description: t('loading.steps.youtube.description'),
+      icon: Youtube,
+    },
+    {
+      id: 'generating',
+      title: t('loading.steps.generating.title'),
+      description: t('loading.steps.generating.description'),
+      icon: Sparkles,
+    },
+  ];
 
   useEffect(() => {
     if (progress) {
@@ -78,17 +83,17 @@ export default function LoadingProgress({ progress }: LoadingProgressProps) {
           <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Creating Your Perfect Itinerary
+          {t('loading.title')}
         </h2>
         <p className="text-gray-600">
-          Please wait while we gather information and craft your personalized travel plan
+          {t('loading.subtitle')}
         </p>
       </div>
 
       {/* Progress Bar */}
       <div className="mb-8">
         <div className="flex justify-between text-xs text-gray-500 mb-2">
-          <span>Progress</span>
+          <span>{t('loading.progress')}</span>
           <span>{Math.round(((currentStep + 1) / steps.length) * 100)}%</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
@@ -173,7 +178,7 @@ export default function LoadingProgress({ progress }: LoadingProgressProps) {
       )}
 
       <div className="mt-6 text-center text-sm text-gray-500">
-        <p>This usually takes 30-60 seconds. Thank you for your patience!</p>
+        <p>{t('loading.timeEstimate')}</p>
       </div>
     </div>
   );

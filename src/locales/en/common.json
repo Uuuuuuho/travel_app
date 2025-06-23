@@ -1,0 +1,187 @@
+{
+  "app": {
+    "name": "TravelCraft",
+    "tagline": "AI-Powered Travel Planning"
+  },
+  "navigation": {
+    "home": "Home",
+    "myItineraries": "My Itineraries",
+    "destinations": "Destinations",
+    "about": "About"
+  },
+  "hero": {
+    "title": "Discover Your Next",
+    "titleHighlight": "Adventure",
+    "subtitle": "Let AI create the perfect travel itinerary for you. Get personalized recommendations, local insights, and detailed day-by-day plans tailored to your interests and budget."
+  },
+  "features": {
+    "title": "Why Choose TravelCraft?",
+    "aiPowered": {
+      "title": "AI-Powered Planning",
+      "description": "Our advanced AI analyzes thousands of travel resources to create personalized itineraries just for you."
+    },
+    "localInsights": {
+      "title": "Local Insights",
+      "description": "Get insider tips and hidden gems from travel blogs, videos, and local recommendations."
+    },
+    "budgetFriendly": {
+      "title": "Budget-Friendly",
+      "description": "Plans tailored to your budget with cost breakdowns and money-saving tips for every destination."
+    }
+  },
+  "form": {
+    "title": "Plan Your Perfect Trip",
+    "subtitle": "Tell us about your dream destination and we'll create a personalized itinerary for you",
+    "destination": {
+      "label": "Where do you want to go?",
+      "placeholder": "e.g., Paris, France or Tokyo, Japan",
+      "error": "Destination must be at least 2 characters"
+    },
+    "duration": {
+      "label": "Duration (days)",
+      "error": "Duration must be between 1 and 30 days"
+    },
+    "travelers": {
+      "label": "Number of travelers",
+      "error": "Number of travelers must be between 1 and 20"
+    },
+    "budget": {
+      "label": "Budget Level",
+      "budget": "Budget",
+      "midRange": "Mid Range",
+      "luxury": "Luxury",
+      "budgetDesc": "$50-100/day",
+      "midRangeDesc": "$100-250/day",
+      "luxuryDesc": "$250+/day"
+    },
+    "interests": {
+      "label": "What interests you? (Select all that apply)",
+      "error": "At least one interest must be selected",
+      "culture": "Culture & History",
+      "adventure": "Adventure & Outdoor",
+      "food": "Food & Cuisine",
+      "nightlife": "Nightlife & Entertainment",
+      "art": "Art & Museums",
+      "nature": "Nature & Wildlife",
+      "beach": "Beach & Relaxation",
+      "shopping": "Shopping",
+      "photography": "Photography",
+      "local": "Local Experiences"
+    },
+    "submit": "Create My Itinerary",
+    "generating": "Generating Your Itinerary..."
+  },
+  "loading": {
+    "title": "Creating Your Perfect Itinerary",
+    "subtitle": "Please wait while we gather information and craft your personalized travel plan",
+    "progress": "Progress",
+    "steps": {
+      "analyzing": {
+        "title": "Analyzing Destination",
+        "description": "Processing your destination and preferences"
+      },
+      "scraping": {
+        "title": "Gathering Information",
+        "description": "Collecting data from travel websites and blogs"
+      },
+      "youtube": {
+        "title": "Finding Video Content",
+        "description": "Searching for relevant travel videos and vlogs"
+      },
+      "generating": {
+        "title": "Creating Itinerary",
+        "description": "AI is crafting your personalized travel plan"
+      }
+    },
+    "timeEstimate": "This usually takes 30-60 seconds. Thank you for your patience!"
+  },
+  "itinerary": {
+    "title": "Travel Itinerary",
+    "days": "days",
+    "travelers": "travelers",
+    "share": "Share",
+    "export": "Export",
+    "edit": "Edit",
+    "planAnother": "Plan Another Trip",
+    "overview": {
+      "bestTime": "Best Time to Visit",
+      "attractions": "Top Attractions",
+      "activities": "Activities",
+      "attractionsPlanned": "attractions planned",
+      "activitiesIncluded": "activities included"
+    },
+    "daily": {
+      "title": "Daily Itinerary",
+      "day": "Day",
+      "transportation": "Transportation",
+      "meals": "Dining Recommendations",
+      "notes": "Notes for the Day"
+    },
+    "sections": {
+      "topAttractions": "Top Attractions",
+      "budgetOverview": "Budget Overview",
+      "localTips": "Local Tips & Insights"
+    },
+    "budget": {
+      "dailyRange": "Daily Budget Range",
+      "breakdown": "Expense Breakdown",
+      "accommodation": "Accommodation",
+      "food": "Food",
+      "transportation": "Transportation",
+      "activities": "Activities"
+    },
+    "mealTypes": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snack": "Snack"
+    }
+  },
+  "error": {
+    "title": "Oops! Something went wrong",
+    "tryAgain": "Try Again",
+    "missingFields": "Missing required fields",
+    "invalidDuration": "Duration must be between 1 and 30 days",
+    "invalidTravelers": "Number of travelers must be between 1 and 20",
+    "invalidBudget": "Invalid budget level",
+    "noInterests": "At least one interest must be selected",
+    "generateFailed": "Failed to generate itinerary. Please try again.",
+    "networkError": "Network error. Please check your connection and try again."
+  },
+  "footer": {
+    "description": "Create personalized travel itineraries powered by AI. Discover amazing destinations, local experiences, and hidden gems tailored to your interests and budget.",
+    "madeWith": "Made with",
+    "forTravelers": "for travelers worldwide",
+    "features": "Features",
+    "featuresList": {
+      "aiPowered": "AI-Powered Itineraries",
+      "localInsights": "Local Insights",
+      "budgetPlanning": "Budget Planning",
+      "visualContent": "Visual Content",
+      "exportShare": "Export & Share"
+    },
+    "support": "Support",
+    "supportLinks": {
+      "helpCenter": "Help Center",
+      "contact": "Contact Us",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "copyright": "All rights reserved."
+  },
+  "language": {
+    "selector": "Language",
+    "current": "Current language"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK"
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "app": {
+    "name": "TravelCraft",
+    "tagline": "Planificación de Viajes con IA"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "myItineraries": "Mis Itinerarios",
+    "destinations": "Destinos",
+    "about": "Acerca de"
+  },
+  "hero": {
+    "title": "Descubre tu Próxima",
+    "titleHighlight": "Aventura",
+    "subtitle": "Deja que la IA cree el itinerario de viaje perfecto para ti. Obtén recomendaciones personalizadas, consejos locales y planes detallados día a día adaptados a tus intereses y presupuesto."
+  },
+  "features": {
+    "title": "¿Por qué elegir TravelCraft?",
+    "aiPowered": {
+      "title": "Planificación con IA",
+      "description": "Nuestra IA avanzada analiza miles de recursos de viaje para crear itinerarios personalizados solo para ti."
+    },
+    "localInsights": {
+      "title": "Consejos Locales",
+      "description": "Obtén consejos de expertos y joyas ocultas de blogs de viajes, videos y recomendaciones locales."
+    },
+    "budgetFriendly": {
+      "title": "Económico",
+      "description": "Planes adaptados a tu presupuesto con desglose de costos y consejos para ahorrar dinero en cada destino."
+    }
+  },
+  "form": {
+    "title": "Planifica tu Viaje Perfecto",
+    "subtitle": "Cuéntanos sobre tu destino soñado y crearemos un itinerario personalizado para ti",
+    "destination": {
+      "label": "¿A dónde quieres ir?",
+      "placeholder": "ej., París, Francia o Tokio, Japón",
+      "error": "El destino debe tener al menos 2 caracteres"
+    },
+    "duration": {
+      "label": "Duración (días)",
+      "error": "La duración debe estar entre 1 y 30 días"
+    },
+    "travelers": {
+      "label": "Número de viajeros",
+      "error": "El número de viajeros debe estar entre 1 y 20"
+    },
+    "budget": {
+      "label": "Nivel de Presupuesto",
+      "budget": "Económico",
+      "midRange": "Medio",
+      "luxury": "Lujo",
+      "budgetDesc": "$50-100/día",
+      "midRangeDesc": "$100-250/día",
+      "luxuryDesc": "$250+/día"
+    },
+    "interests": {
+      "label": "¿Qué te interesa? (Selecciona todo lo que aplique)",
+      "error": "Debe seleccionar al menos un interés",
+      "culture": "Cultura e Historia",
+      "adventure": "Aventura y Aire Libre",
+      "food": "Comida y Gastronomía",
+      "nightlife": "Vida Nocturna y Entretenimiento",
+      "art": "Arte y Museos",
+      "nature": "Naturaleza y Vida Silvestre",
+      "beach": "Playa y Relajación",
+      "shopping": "Compras",
+      "photography": "Fotografía",
+      "local": "Experiencias Locales"
+    },
+    "submit": "Crear Mi Itinerario",
+    "generating": "Generando Tu Itinerario..."
+  },
+  "loading": {
+    "title": "Creando Tu Itinerario Perfecto",
+    "subtitle": "Por favor espera mientras recopilamos información y creamos tu plan de viaje personalizado",
+    "progress": "Progreso",
+    "steps": {
+      "analyzing": {
+        "title": "Analizando Destino",
+        "description": "Procesando tu destino y preferencias"
+      },
+      "scraping": {
+        "title": "Recopilando Información",
+        "description": "Recolectando datos de sitios web y blogs de viajes"
+      },
+      "youtube": {
+        "title": "Buscando Contenido de Video",
+        "description": "Buscando videos de viajes y vlogs relevantes"
+      },
+      "generating": {
+        "title": "Creando Itinerario",
+        "description": "La IA está creando tu plan de viaje personalizado"
+      }
+    },
+    "timeEstimate": "Esto usualmente toma 30-60 segundos. ¡Gracias por tu paciencia!"
+  },
+  "itinerary": {
+    "title": "Itinerario de Viaje",
+    "days": "días",
+    "travelers": "viajeros",
+    "share": "Compartir",
+    "export": "Exportar",
+    "edit": "Editar",
+    "planAnother": "Planificar Otro Viaje",
+    "overview": {
+      "bestTime": "Mejor Época para Visitar",
+      "attractions": "Principales Atracciones",
+      "activities": "Actividades",
+      "attractionsPlanned": "atracciones planificadas",
+      "activitiesIncluded": "actividades incluidas"
+    },
+    "daily": {
+      "title": "Itinerario Diario",
+      "day": "Día",
+      "transportation": "Transporte",
+      "meals": "Sugerencias de Comidas",
+      "notes": "Notas del Día"
+    },
+    "sections": {
+      "topAttractions": "Principales Atracciones",
+      "budgetOverview": "Resumen del Presupuesto",
+      "localTips": "Consejos Locales y Perspectivas"
+    },
+    "budget": {
+      "dailyRange": "Rango de Presupuesto Diario",
+      "breakdown": "Desglose de Gastos",
+      "accommodation": "Alojamiento",
+      "food": "Comida",
+      "transportation": "Transporte",
+      "activities": "Actividades"
+    },
+    "mealTypes": {
+      "breakfast": "Desayuno",
+      "lunch": "Almuerzo",
+      "dinner": "Cena",
+      "snack": "Merienda"
+    }
+  },
+  "error": {
+    "title": "¡Ups! Algo salió mal",
+    "tryAgain": "Intentar de Nuevo",
+    "missingFields": "Faltan campos requeridos",
+    "invalidDuration": "La duración debe estar entre 1 y 30 días",
+    "invalidTravelers": "El número de viajeros debe estar entre 1 y 20",
+    "invalidBudget": "Nivel de presupuesto inválido",
+    "noInterests": "Debe seleccionar al menos un interés",
+    "generateFailed": "Error al generar itinerario. Por favor intenta de nuevo.",
+    "networkError": "Error de red. Por favor verifica tu conexión e intenta de nuevo."
+  },
+  "footer": {
+    "description": "Crea itinerarios de viaje personalizados con IA. Descubre destinos increíbles, experiencias locales y joyas ocultas adaptadas a tus intereses y presupuesto.",
+    "madeWith": "Hecho con",
+    "forTravelers": "para viajeros de todo el mundo",
+    "features": "Características",
+    "featuresList": {
+      "aiPowered": "Itinerarios con IA",
+      "localInsights": "Consejos Locales",
+      "budgetPlanning": "Planificación de Presupuesto",
+      "visualContent": "Contenido Visual",
+      "exportShare": "Exportar y Compartir"
+    },
+    "support": "Soporte",
+    "supportLinks": {
+      "helpCenter": "Centro de Ayuda",
+      "contact": "Contáctanos",
+      "privacy": "Política de Privacidad",
+      "terms": "Términos de Servicio"
+    },
+    "copyright": "Todos los derechos reservados."
+  },
+  "language": {
+    "selector": "Idioma",
+    "current": "Idioma actual"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "yes": "Sí",
+    "no": "No",
+    "ok": "OK"
+  }
+}

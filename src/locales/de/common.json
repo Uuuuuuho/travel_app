@@ -1,0 +1,187 @@
+{
+  "app": {
+    "name": "TravelCraft",
+    "tagline": "KI-gestützte Reiseplanung"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "myItineraries": "Meine Reisepläne",
+    "destinations": "Reiseziele",
+    "about": "Über uns"
+  },
+  "hero": {
+    "title": "Entdecke dein nächstes",
+    "titleHighlight": "Abenteuer",
+    "subtitle": "Lass die KI den perfekten Reiseplan für dich erstellen. Erhalte personalisierte Empfehlungen, lokale Einblicke und detaillierte Tagespläne, die auf deine Interessen und dein Budget zugeschnitten sind."
+  },
+  "features": {
+    "title": "Warum TravelCraft wählen?",
+    "aiPowered": {
+      "title": "KI-gestützte Planung",
+      "description": "Unsere fortschrittliche KI analysiert Tausende von Reiseressourcen, um personalisierte Reisepläne nur für dich zu erstellen."
+    },
+    "localInsights": {
+      "title": "Lokale Einblicke",
+      "description": "Erhalte Insider-Tipps und versteckte Juwelen aus Reiseblogs, Videos und lokalen Empfehlungen."
+    },
+    "budgetFriendly": {
+      "title": "Budgetfreundlich",
+      "description": "Pläne, die auf dein Budget zugeschnitten sind, mit Kostenaufschlüsselung und Spartipps für jedes Reiseziel."
+    }
+  },
+  "form": {
+    "title": "Plane deine perfekte Reise",
+    "subtitle": "Erzähle uns von deinem Traumziel und wir erstellen einen personalisierten Reiseplan für dich",
+    "destination": {
+      "label": "Wohin möchtest du reisen?",
+      "placeholder": "z.B. Paris, Frankreich oder Tokio, Japan",
+      "error": "Das Reiseziel muss mindestens 2 Zeichen haben"
+    },
+    "duration": {
+      "label": "Dauer (Tage)",
+      "error": "Die Dauer muss zwischen 1 und 30 Tagen liegen"
+    },
+    "travelers": {
+      "label": "Anzahl der Reisenden",
+      "error": "Die Anzahl der Reisenden muss zwischen 1 und 20 liegen"
+    },
+    "budget": {
+      "label": "Budget-Level",
+      "budget": "Budget",
+      "midRange": "Mittelklasse",
+      "luxury": "Luxus",
+      "budgetDesc": "50-100$/Tag",
+      "midRangeDesc": "100-250$/Tag",
+      "luxuryDesc": "250$+/Tag"
+    },
+    "interests": {
+      "label": "Was interessiert dich? (Wähle alles Zutreffende)",
+      "error": "Mindestens ein Interesse muss ausgewählt werden",
+      "culture": "Kultur & Geschichte",
+      "adventure": "Abenteuer & Outdoor",
+      "food": "Essen & Küche",
+      "nightlife": "Nachtleben & Unterhaltung",
+      "art": "Kunst & Museen",
+      "nature": "Natur & Tierwelt",
+      "beach": "Strand & Entspannung",
+      "shopping": "Shopping",
+      "photography": "Fotografie",
+      "local": "Lokale Erfahrungen"
+    },
+    "submit": "Meinen Reiseplan erstellen",
+    "generating": "Erstelle deinen Reiseplan..."
+  },
+  "loading": {
+    "title": "Erstelle deinen perfekten Reiseplan",
+    "subtitle": "Bitte warte, während wir Informationen sammeln und deinen personalisierten Reiseplan erstellen",
+    "progress": "Fortschritt",
+    "steps": {
+      "analyzing": {
+        "title": "Reiseziel analysieren",
+        "description": "Verarbeitung deines Reiseziels und deiner Präferenzen"
+      },
+      "scraping": {
+        "title": "Informationen sammeln",
+        "description": "Sammlung von Daten aus Reise-Websites und Blogs"
+      },
+      "youtube": {
+        "title": "Video-Inhalte finden",
+        "description": "Suche nach relevanten Reisevideos und Vlogs"
+      },
+      "generating": {
+        "title": "Reiseplan erstellen",
+        "description": "Die KI erstellt deinen personalisierten Reiseplan"
+      }
+    },
+    "timeEstimate": "Das dauert normalerweise 30-60 Sekunden. Danke für deine Geduld!"
+  },
+  "itinerary": {
+    "title": "Reiseplan",
+    "days": "Tage",
+    "travelers": "Reisende",
+    "share": "Teilen",
+    "export": "Exportieren",
+    "edit": "Bearbeiten",
+    "planAnother": "Weitere Reise planen",
+    "overview": {
+      "bestTime": "Beste Reisezeit",
+      "attractions": "Top-Attraktionen",
+      "activities": "Aktivitäten",
+      "attractionsPlanned": "Attraktionen geplant",
+      "activitiesIncluded": "Aktivitäten enthalten"
+    },
+    "daily": {
+      "title": "Täglicher Reiseplan",
+      "day": "Tag",
+      "transportation": "Transport",
+      "meals": "Mahlzeit-Vorschläge",
+      "notes": "Notizen für den Tag"
+    },
+    "sections": {
+      "topAttractions": "Top-Attraktionen",
+      "budgetOverview": "Budget-Übersicht",
+      "localTips": "Lokale Tipps & Einblicke"
+    },
+    "budget": {
+      "dailyRange": "Täglicher Budget-Bereich",
+      "breakdown": "Ausgaben-Aufschlüsselung",
+      "accommodation": "Unterkunft",
+      "food": "Essen",
+      "transportation": "Transport",
+      "activities": "Aktivitäten"
+    },
+    "mealTypes": {
+      "breakfast": "Frühstück",
+      "lunch": "Mittagessen",
+      "dinner": "Abendessen",
+      "snack": "Snack"
+    }
+  },
+  "error": {
+    "title": "Ups! Etwas ist schiefgelaufen",
+    "tryAgain": "Erneut versuchen",
+    "missingFields": "Erforderliche Felder fehlen",
+    "invalidDuration": "Die Dauer muss zwischen 1 und 30 Tagen liegen",
+    "invalidTravelers": "Die Anzahl der Reisenden muss zwischen 1 und 20 liegen",
+    "invalidBudget": "Ungültiges Budget-Level",
+    "noInterests": "Mindestens ein Interesse muss ausgewählt werden",
+    "generateFailed": "Fehler beim Erstellen des Reiseplans. Bitte versuche es erneut.",
+    "networkError": "Netzwerkfehler. Bitte überprüfe deine Verbindung und versuche es erneut."
+  },
+  "footer": {
+    "description": "Erstelle personalisierte Reisepläne mit KI. Entdecke erstaunliche Reiseziele, lokale Erfahrungen und versteckte Juwelen, die auf deine Interessen und dein Budget zugeschnitten sind.",
+    "madeWith": "Gemacht mit",
+    "forTravelers": "für Reisende weltweit",
+    "features": "Funktionen",
+    "featuresList": {
+      "aiPowered": "KI-gestützte Reisepläne",
+      "localInsights": "Lokale Einblicke",
+      "budgetPlanning": "Budget-Planung",
+      "visualContent": "Visueller Inhalt",
+      "exportShare": "Exportieren & Teilen"
+    },
+    "support": "Support",
+    "supportLinks": {
+      "helpCenter": "Hilfe-Center",
+      "contact": "Kontakt",
+      "privacy": "Datenschutz",
+      "terms": "Nutzungsbedingungen"
+    },
+    "copyright": "Alle Rechte vorbehalten."
+  },
+  "language": {
+    "selector": "Sprache",
+    "current": "Aktuelle Sprache"
+  },
+  "common": {
+    "loading": "Laden...",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "yes": "Ja",
+    "no": "Nein",
+    "ok": "OK"
+  }
+}

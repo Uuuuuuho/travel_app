@@ -1,0 +1,187 @@
+{
+  "app": {
+    "name": "TravelCraft",
+    "tagline": "Planification de Voyage avec IA"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "myItineraries": "Mes Itinéraires",
+    "destinations": "Destinations",
+    "about": "À propos"
+  },
+  "hero": {
+    "title": "Découvrez votre Prochaine",
+    "titleHighlight": "Aventure",
+    "subtitle": "Laissez l'IA créer l'itinéraire de voyage parfait pour vous. Obtenez des recommandations personnalisées, des conseils locaux et des plans détaillés jour par jour adaptés à vos intérêts et votre budget."
+  },
+  "features": {
+    "title": "Pourquoi choisir TravelCraft ?",
+    "aiPowered": {
+      "title": "Planification par IA",
+      "description": "Notre IA avancée analyse des milliers de ressources de voyage pour créer des itinéraires personnalisés rien que pour vous."
+    },
+    "localInsights": {
+      "title": "Conseils Locaux",
+      "description": "Obtenez des conseils d'initiés et des joyaux cachés de blogs de voyage, vidéos et recommandations locales."
+    },
+    "budgetFriendly": {
+      "title": "Économique",
+      "description": "Plans adaptés à votre budget avec répartition des coûts et conseils d'économie pour chaque destination."
+    }
+  },
+  "form": {
+    "title": "Planifiez votre Voyage Parfait",
+    "subtitle": "Parlez-nous de votre destination de rêve et nous créerons un itinéraire personnalisé pour vous",
+    "destination": {
+      "label": "Où voulez-vous aller ?",
+      "placeholder": "ex., Paris, France ou Tokyo, Japon",
+      "error": "La destination doit contenir au moins 2 caractères"
+    },
+    "duration": {
+      "label": "Durée (jours)",
+      "error": "La durée doit être entre 1 et 30 jours"
+    },
+    "travelers": {
+      "label": "Nombre de voyageurs",
+      "error": "Le nombre de voyageurs doit être entre 1 et 20"
+    },
+    "budget": {
+      "label": "Niveau de Budget",
+      "budget": "Économique",
+      "midRange": "Moyen",
+      "luxury": "Luxe",
+      "budgetDesc": "50-100$/jour",
+      "midRangeDesc": "100-250$/jour",
+      "luxuryDesc": "250$+/jour"
+    },
+    "interests": {
+      "label": "Qu'est-ce qui vous intéresse ? (Sélectionnez tout ce qui s'applique)",
+      "error": "Au moins un intérêt doit être sélectionné",
+      "culture": "Culture et Histoire",
+      "adventure": "Aventure et Plein Air",
+      "food": "Nourriture et Gastronomie",
+      "nightlife": "Vie Nocturne et Divertissement",
+      "art": "Art et Musées",
+      "nature": "Nature et Faune",
+      "beach": "Plage et Détente",
+      "shopping": "Shopping",
+      "photography": "Photographie",
+      "local": "Expériences Locales"
+    },
+    "submit": "Créer Mon Itinéraire",
+    "generating": "Génération de Votre Itinéraire..."
+  },
+  "loading": {
+    "title": "Création de Votre Itinéraire Parfait",
+    "subtitle": "Veuillez patienter pendant que nous rassemblons les informations et créons votre plan de voyage personnalisé",
+    "progress": "Progrès",
+    "steps": {
+      "analyzing": {
+        "title": "Analyse de la Destination",
+        "description": "Traitement de votre destination et préférences"
+      },
+      "scraping": {
+        "title": "Collecte d'Informations",
+        "description": "Collecte de données de sites web et blogs de voyage"
+      },
+      "youtube": {
+        "title": "Recherche de Contenu Vidéo",
+        "description": "Recherche de vidéos de voyage et vlogs pertinents"
+      },
+      "generating": {
+        "title": "Création de l'Itinéraire",
+        "description": "L'IA crée votre plan de voyage personnalisé"
+      }
+    },
+    "timeEstimate": "Cela prend généralement 30-60 secondes. Merci pour votre patience !"
+  },
+  "itinerary": {
+    "title": "Itinéraire de Voyage",
+    "days": "jours",
+    "travelers": "voyageurs",
+    "share": "Partager",
+    "export": "Exporter",
+    "edit": "Modifier",
+    "planAnother": "Planifier un Autre Voyage",
+    "overview": {
+      "bestTime": "Meilleure Période pour Visiter",
+      "attractions": "Principales Attractions",
+      "activities": "Activités",
+      "attractionsPlanned": "attractions planifiées",
+      "activitiesIncluded": "activités incluses"
+    },
+    "daily": {
+      "title": "Itinéraire Quotidien",
+      "day": "Jour",
+      "transportation": "Transport",
+      "meals": "Suggestions de Repas",
+      "notes": "Notes du Jour"
+    },
+    "sections": {
+      "topAttractions": "Principales Attractions",
+      "budgetOverview": "Aperçu du Budget",
+      "localTips": "Conseils Locaux et Perspectives"
+    },
+    "budget": {
+      "dailyRange": "Fourchette de Budget Quotidien",
+      "breakdown": "Répartition des Dépenses",
+      "accommodation": "Hébergement",
+      "food": "Nourriture",
+      "transportation": "Transport",
+      "activities": "Activités"
+    },
+    "mealTypes": {
+      "breakfast": "Petit-déjeuner",
+      "lunch": "Déjeuner",
+      "dinner": "Dîner",
+      "snack": "Collation"
+    }
+  },
+  "error": {
+    "title": "Oups ! Quelque chose s'est mal passé",
+    "tryAgain": "Réessayer",
+    "missingFields": "Champs requis manquants",
+    "invalidDuration": "La durée doit être entre 1 et 30 jours",
+    "invalidTravelers": "Le nombre de voyageurs doit être entre 1 et 20",
+    "invalidBudget": "Niveau de budget invalide",
+    "noInterests": "Au moins un intérêt doit être sélectionné",
+    "generateFailed": "Échec de la génération de l'itinéraire. Veuillez réessayer.",
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer."
+  },
+  "footer": {
+    "description": "Créez des itinéraires de voyage personnalisés avec l'IA. Découvrez des destinations incroyables, des expériences locales et des joyaux cachés adaptés à vos intérêts et votre budget.",
+    "madeWith": "Fait avec",
+    "forTravelers": "pour les voyageurs du monde entier",
+    "features": "Fonctionnalités",
+    "featuresList": {
+      "aiPowered": "Itinéraires par IA",
+      "localInsights": "Conseils Locaux",
+      "budgetPlanning": "Planification de Budget",
+      "visualContent": "Contenu Visuel",
+      "exportShare": "Exporter et Partager"
+    },
+    "support": "Support",
+    "supportLinks": {
+      "helpCenter": "Centre d'Aide",
+      "contact": "Nous Contacter",
+      "privacy": "Politique de Confidentialité",
+      "terms": "Conditions de Service"
+    },
+    "copyright": "Tous droits réservés."
+  },
+  "language": {
+    "selector": "Langue",
+    "current": "Langue actuelle"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "save": "Sauvegarder",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK"
+  }
+}

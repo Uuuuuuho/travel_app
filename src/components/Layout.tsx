@@ -1,13 +1,17 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plane, Github, Heart } from 'lucide-react';
+import LanguageSelector from './LanguageSelector';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Header */}
@@ -16,22 +20,25 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Plane className="h-8 w-8 text-blue-600 mr-2" />
-              <h1 className="text-xl font-bold text-gray-900">TravelCraft</h1>
+              <h1 className="text-xl font-bold text-gray-900">{t('app.name')}</h1>
             </div>
-            <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
-                Home
-              </a>
-              <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
-                My Itineraries
-              </a>
-              <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
-                Destinations
-              </a>
-              <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
-                About
-              </a>
-            </nav>
+            <div className="flex items-center space-x-4">
+              <nav className="hidden md:flex space-x-8">
+                <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
+                  {t('navigation.home')}
+                </a>
+                <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
+                  {t('navigation.myItineraries')}
+                </a>
+                <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
+                  {t('navigation.destinations')}
+                </a>
+                <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">
+                  {t('navigation.about')}
+                </a>
+              </nav>
+              <LanguageSelector />
+            </div>
           </div>
         </div>
       </header>
@@ -50,55 +57,54 @@ export default function Layout({ children }: LayoutProps) {
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center mb-4">
                 <Plane className="h-6 w-6 text-blue-400 mr-2" />
-                <h3 className="text-lg font-bold">TravelCraft</h3>
+                <h3 className="text-lg font-bold">{t('app.name')}</h3>
               </div>
               <p className="text-gray-400 mb-4">
-                Create personalized travel itineraries powered by AI. Discover amazing destinations, 
-                local experiences, and hidden gems tailored to your interests and budget.
+                {t('footer.description')}
               </p>
               <div className="flex items-center text-sm text-gray-400">
-                <span>Made with</span>
+                <span>{t('footer.madeWith')}</span>
                 <Heart className="h-4 w-4 text-red-400 mx-1" />
-                <span>for travelers worldwide</span>
+                <span>{t('footer.forTravelers')}</span>
               </div>
             </div>
 
             <div>
               <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">
-                Features
+                {t('footer.features')}
               </h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>AI-Powered Itineraries</li>
-                <li>Local Insights</li>
-                <li>Budget Planning</li>
-                <li>Visual Content</li>
-                <li>Export & Share</li>
+                <li>{t('footer.featuresList.aiPowered')}</li>
+                <li>{t('footer.featuresList.localInsights')}</li>
+                <li>{t('footer.featuresList.budgetPlanning')}</li>
+                <li>{t('footer.featuresList.visualContent')}</li>
+                <li>{t('footer.featuresList.exportShare')}</li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">
-                Support
+                {t('footer.support')}
               </h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
                   <a href="#" className="hover:text-white transition-colors">
-                    Help Center
+                    {t('footer.supportLinks.helpCenter')}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-white transition-colors">
-                    Contact Us
+                    {t('footer.supportLinks.contact')}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-white transition-colors">
-                    Privacy Policy
+                    {t('footer.supportLinks.privacy')}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-white transition-colors">
-                    Terms of Service
+                    {t('footer.supportLinks.terms')}
                   </a>
                 </li>
               </ul>
@@ -107,7 +113,7 @@ export default function Layout({ children }: LayoutProps) {
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-400">
-              © 2024 TravelCraft. All rights reserved.
+              © 2024 {t('app.name')}. {t('footer.copyright')}
             </p>
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
               <a

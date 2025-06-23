@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TravelItinerary } from '@/types';
 import { 
   MapPin, 
@@ -24,6 +25,7 @@ interface ItineraryDisplayProps {
 }
 
 export default function ItineraryDisplay({ itinerary, onEdit, onSave }: ItineraryDisplayProps) {
+  const { t } = useTranslation();
   const [activeDay, setActiveDay] = useState(1);
 
   const handleExport = () => {
@@ -191,19 +193,97 @@ export default function ItineraryDisplay({ itinerary, onEdit, onSave }: Itinerar
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
                     <Utensils className="w-4 h-4 mr-2" />
-                    Meal Suggestions
+                    {t('itinerary.daily.meals')}
                   </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {day.meals.map((meal, index) => (
-                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                        <div className="font-medium text-gray-900">{meal.type}</div>
-                        <div className="text-gray-700">{meal.suggestion}</div>
-                        {meal.location && (
-                          <div className="text-sm text-gray-600">{meal.location}</div>
+                      <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-2">
+                          <h5 className="font-semibold text-gray-900">{meal.type}</h5>
+                          <span className="text-sm font-medium text-green-600">{meal.priceRange || meal.cost}</span>
+                        </div>
+
+                        <div className="mb-3">
+                          <h6 className="font-medium text-gray-800">{meal.name || meal.suggestion}</h6>
+                          <p className="text-sm text-gray-600 mb-1">{meal.location}</p>
+                          {meal.description && (
+                            <p className="text-sm text-gray-700 mb-2">{meal.description}</p>
+                          )}
+                        </div>
+
+                        {meal.specialties && meal.specialties.length > 0 && (
+                          <div className="mb-3">
+                            <p className="text-xs font-medium text-gray-600 mb-1">Specialties:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {meal.specialties.map((specialty, idx) => (
+                                <span key={idx} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                  {specialty}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         )}
-                        {meal.cost && (
-                          <div className="text-sm text-green-600 font-medium">{meal.cost}</div>
+
+                        {meal.recommendation && (
+                          <div className="mb-3">
+                            <p className="text-xs font-medium text-gray-600 mb-1">Why recommended:</p>
+                            <p className="text-xs text-gray-700">{meal.recommendation}</p>
+                          </div>
                         )}
+
+                        {meal.culturalContext && (
+                          <div className="mb-3">
+                            <p className="text-xs font-medium text-gray-600 mb-1">Cultural context:</p>
+                            <p className="text-xs text-gray-700">{meal.culturalContext}</p>
+                          </div>
+                        )}
+
+                        <div className="border-t border-gray-100 pt-3 mt-3">
+                          <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                            <span>{meal.openingHours}</span>
+                            {meal.reservationNeeded && (
+                              <span className="text-orange-600 font-medium">Reservation needed</span>
+                            )}
+                          </div>
+
+                          {meal.distanceFromActivity && (
+                            <p className="text-xs text-gray-600 mb-2">{meal.distanceFromActivity}</p>
+                          )}
+
+                          <div className="flex gap-2">
+                            {meal.website && (
+                              <a
+                                href={meal.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-blue-600 hover:text-blue-800 underline"
+                              >
+                                Website
+                              </a>
+                            )}
+                            {meal.reviewLink && (
+                              <a
+                                href={meal.reviewLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-blue-600 hover:text-blue-800 underline"
+                              >
+                                Reviews
+                              </a>
+                            )}
+                          </div>
+
+                          {(meal.paymentMethods || meal.tippingCustom) && (
+                            <div className="mt-2 pt-2 border-t border-gray-100">
+                              {meal.paymentMethods && (
+                                <p className="text-xs text-gray-600 mb-1">{meal.paymentMethods}</p>
+                              )}
+                              {meal.tippingCustom && (
+                                <p className="text-xs text-gray-600">{meal.tippingCustom}</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -342,9 +422,17 @@ function generateTextItinerary(itinerary: TravelItinerary): string {
     if (day.meals.length > 0) {
       text += 'MEALS:\n';
       day.meals.forEach((meal) => {
-        text += `${meal.type}: ${meal.suggestion}`;
-        if (meal.location) text += ` at ${meal.location}`;
-        if (meal.cost) text += ` (${meal.cost})`;
+        text += `${meal.type}: ${meal.name || meal.suggestion}\n`;
+        text += `Location: ${meal.location}\n`;
+        if (meal.description) text += `Description: ${meal.description}\n`;
+        if (meal.specialties && meal.specialties.length > 0) {
+          text += `Specialties: ${meal.specialties.join(', ')}\n`;
+        }
+        text += `Price Range: ${meal.priceRange || meal.cost}\n`;
+        if (meal.recommendation) text += `Why recommended: ${meal.recommendation}\n`;
+        if (meal.openingHours) text += `Hours: ${meal.openingHours}\n`;
+        if (meal.website) text += `Website: ${meal.website}\n`;
+        if (meal.reservationNeeded) text += `Reservation: Required\n`;
         text += '\n';
       });
       text += '\n';
