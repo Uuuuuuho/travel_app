@@ -95,6 +95,18 @@ export interface MealSuggestion {
   suggestion: string;
   location?: string;
   cost?: string;
+  priceRange?: string;
+  name?: string;
+  description?: string;
+  specialties?: string[];
+  recommendation?: string;
+  culturalContext?: string;
+  website?: string;
+  reviewLink?: string;
+  openingHours?: string;
+  reservationNeeded?: boolean;
+  distanceFromActivity?: string;
+  [key: string]: unknown;
 }
 
 export interface TravelItinerary {

@@ -72,10 +72,15 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      const errorDetails =
+        process.env.NODE_ENV === 'development'
+          ? (generationError instanceof Error ? generationError.message : String(generationError))
+          : undefined;
+
       return NextResponse.json(
         {
           error: errorMessage,
-          details: process.env.NODE_ENV === 'development' ? generationError.message : undefined
+          details: errorDetails,
         },
         { status: 500 }
       );
@@ -83,10 +88,15 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Unexpected error in API route:', error);
 
+    const unexpectedDetails =
+      process.env.NODE_ENV === 'development'
+        ? (error instanceof Error ? error.message : String(error))
+        : undefined;
+
     return NextResponse.json(
       {
         error: 'An unexpected error occurred. Please try again.',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: unexpectedDetails,
       },
       { status: 500 }
     );

@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { TravelItinerary, WebScrapingResult, YouTubeVideo, Destination } from '@/types';
 import { getAppConfig, logConfigStatus } from '@/lib/config';
+import { llmService, ChatMessage } from '@/services/llmService';
 
 interface GenerationInput {
   destination: string;
@@ -40,18 +41,18 @@ class AIService {
       let itineraryContent = '';
       let parsedItinerary: any;
 
-      if (!this.openai) {
-        console.warn('OpenAI API key not configured, using fallback itinerary');
+      if (!llmService.isAvailable()) {
+        console.warn('No LLM backend configured, using fallback itinerary');
         parsedItinerary = this.createFallbackItinerary(input);
       } else {
         try {
-          // Generate the main itinerary content
+          // Generate the main itinerary content via LLM
           itineraryContent = await this.generateItineraryContent(input);
 
           // Parse the generated content into structured data
           parsedItinerary = await this.parseItineraryContent(itineraryContent, input);
         } catch (aiError) {
-          console.error('AI generation failed, using fallback:', aiError);
+          console.error('LLM generation failed, using fallback:', aiError);
           parsedItinerary = this.createFallbackItinerary(input);
         }
       }
@@ -88,23 +89,24 @@ class AIService {
     
     const prompt = this.buildPrompt(input, webContext, videoContext);
 
-    const response = await this.openai!.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert travel planner with extensive knowledge of destinations worldwide. Create detailed, practical, and engaging travel itineraries based on user preferences and available information.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+    const messages: ChatMessage[] = [
+      {
+        role: 'system',
+        content: 'You are an expert travel planner with extensive knowledge of destinations worldwide. Create detailed, practical, and engaging travel itineraries based on user preferences and available information.',
+      },
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ];
+
+    const content = await llmService.chat(messages, {
+      model: this.openai ? 'gpt-4' : undefined, // Use default for Ollama
       max_tokens: 4000,
       temperature: 0.7,
     });
 
-    return response.choices[0]?.message?.content || '';
+    return content;
   }
 
   private buildPrompt(input: GenerationInput, webContext: string, videoContext: string): string {
@@ -329,20 +331,20 @@ ${content}
 Return only valid JSON without any additional text.
 `;
 
-    const response = await this.openai!.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'user',
-          content: structurePrompt,
-        },
-      ],
-      max_tokens: 3000,
-      temperature: 0.1,
-    });
+    const messages: ChatMessage[] = [
+      {
+        role: 'user',
+        content: structurePrompt,
+      },
+    ];
 
     try {
-      return JSON.parse(response.choices[0]?.message?.content || '{}');
+      const jsonText = await llmService.chat(messages, {
+        model: this.openai ? 'gpt-3.5-turbo' : undefined,
+        max_tokens: 3000,
+        temperature: 0.1,
+      });
+      return JSON.parse(jsonText || '{}');
     } catch (error) {
       console.error('Error parsing structured response:', error);
       return this.createFallbackItinerary(input);
