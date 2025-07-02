@@ -39,6 +39,38 @@ class WebScrapingService {
   async scrapeDestinationInfo(destination: string, language: string = 'en'): Promise<WebScrapingResult[]> {
     const results: WebScrapingResult[] = [];
 
+    // 0) Try custom search API if configured
+    const customSearchApi = process.env.CUSTOM_SEARCH_API_URL || 'http://localhost:4000/search';
+    if (customSearchApi) {
+      try {
+        const { data } = await axios.get(customSearchApi, {
+          params: { q: destination },
+          timeout: 10_000,
+        });
+
+        if (Array.isArray(data)) {
+          data.slice(0, 10).forEach((item: any) => {
+            if (item && item.title && item.url) {
+              results.push({
+                url: item.url,
+                title: item.title,
+                content: item.snippet || '',
+                relevanceScore: this.calculateRelevance(`${item.title} ${item.snippet}`, destination),
+                scrapedAt: new Date(),
+              });
+            }
+          });
+
+          if (results.length > 0) {
+            return this.rankResults(results);
+          }
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn('Custom search API failed (not critical):', msg);
+      }
+    }
+
     // Create localized search terms
     const localizedDestination = this.getLocalizedDestination(destination, language);
 
