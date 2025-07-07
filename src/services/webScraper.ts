@@ -1,421 +1,376 @@
+import { llmService } from './llmService';
+import { WebScrapingResult } from '@/types';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { WebScrapingResult } from '@/types';
-
-interface ScrapingTarget {
-  url: string;
-  selectors: {
-    title?: string;
-    content?: string;
-    articles?: string;
-  };
-  baseUrl?: string;
-}
 
 class WebScrapingService {
-  private readonly userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
-  
-  private readonly travelSites: ScrapingTarget[] = [
-    {
-      url: 'https://www.lonelyplanet.com/search?q={destination}',
-      selectors: {
-        title: 'h3.card-title a',
-        content: '.card-text',
-        articles: '.card'
-      },
-      baseUrl: 'https://www.lonelyplanet.com'
-    },
-    {
-      url: 'https://www.tripadvisor.com/Search?q={destination}',
-      selectors: {
-        title: '.result-title',
-        content: '.result-snippet',
-        articles: '.result'
-      },
-      baseUrl: 'https://www.tripadvisor.com'
-    }
-  ];
-
   async scrapeDestinationInfo(destination: string, language: string = 'en'): Promise<WebScrapingResult[]> {
-    const results: WebScrapingResult[] = [];
+    console.log(`Starting web scraping for "${destination}" in language "${language}" using LLM...`);
 
-    // 0) Try custom search API if configured
-    const customSearchApi = process.env.CUSTOM_SEARCH_API_URL || 'http://localhost:4000/search';
-    if (customSearchApi) {
+    // Use the same logic as scrapeUrl for consistency
+    const searchResults = await this.performMockSearch('', destination);
+
+    if (searchResults.length === 0) {
+      console.log('No search results found. Returning empty array.');
+      return [];
+    }
+
+    console.log(`Found ${searchResults.length} search results. Analyzing content with LLM...`);
+
+    const extractionPromises = searchResults.map(async (result) => {
+      // Use the same prompt format as scrapeUrl for vLLM compatibility
+      const shortContent = result.content.substring(0, 1500);
+      
+      const extractionPrompt = `Summarize this travel content for ${destination} in exactly this JSON format (no other text):
+{"title":"Brief title","summary":"2 sentences summary","relevanceScore":75}
+
+Content: ${shortContent}
+
+JSON response:`;
+
       try {
-        const { data } = await axios.get(customSearchApi, {
-          params: { q: destination },
-          timeout: 10_000,
+        const extractedJson = await llmService.chat([
+          { role: 'user', content: extractionPrompt },
+        ], { 
+          max_tokens: 200,
+          temperature: 0.0
         });
 
-        if (Array.isArray(data)) {
-          data.slice(0, 10).forEach((item: any) => {
-            if (item && item.title && item.url) {
-              results.push({
-                url: item.url,
-                title: item.title,
-                content: item.snippet || '',
-                relevanceScore: this.calculateRelevance(`${item.title} ${item.snippet}`, destination),
-                scrapedAt: new Date(),
-              });
-            }
-          });
-
-          if (results.length > 0) {
-            return this.rankResults(results);
+        // Use the same JSON parsing logic as scrapeUrl
+        let cleanedJson = this.cleanLLMResponse(extractedJson);
+        let extractedData;
+        
+        try {
+          extractedData = JSON.parse(cleanedJson);
+        } catch (parseError) {
+          console.error('JSON parsing failed for destination info:', parseError);
+          const alternativeParsing = this.extractJSONFromvLLMResponse(extractedJson);
+          if (alternativeParsing) {
+            extractedData = alternativeParsing;
+          } else {
+            // Fallback
+            extractedData = {
+              title: `Travel guide for ${destination}`,
+              summary: result.content.substring(0, 200),
+              relevanceScore: 50
+            };
           }
         }
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        console.warn('Custom search API failed (not critical):', msg);
-      }
-    }
 
-    // Create localized search terms
-    const localizedDestination = this.getLocalizedDestination(destination, language);
-
-    // Try Google Search API first (if available)
-    const blogResults = await this.searchTravelBlogs(localizedDestination, language);
-    results.push(...blogResults);
-
-    // If we have results from Google Search, use them
-    if (results.length > 0) {
-      return this.rankResults(results);
-    }
-
-    // Fallback: Try direct scraping (may fail due to CORS/anti-bot)
-    for (const site of this.travelSites) {
-      try {
-        const siteResults = await this.scrapeSite(site, localizedDestination, language);
-        results.push(...siteResults);
+        return {
+          url: result.url,
+          title: extractedData.title,
+          content: extractedData.summary,
+          relevanceScore: Math.max(0, Math.min(100, extractedData.relevanceScore)),
+          scrapedAt: new Date(),
+        };
       } catch (error) {
-        console.warn(`Scraping ${site.url} failed (expected):`, error.message);
-        // Continue with other sites even if one fails
-      }
-    }
-
-    // If still no results, provide mock data
-    if (results.length === 0) {
-      console.log('No web scraping results available, using mock data for:', destination);
-      return this.generateMockResults(destination, language);
-    }
-
-    return this.rankResults(results);
-  }
-
-  private async scrapeSite(site: ScrapingTarget, destination: string, language: string = 'en'): Promise<WebScrapingResult[]> {
-    const url = site.url.replace('{destination}', encodeURIComponent(destination));
-    
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          'User-Agent': this.userAgent,
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          'Accept-Language': this.getAcceptLanguageHeader(language),
-          'Accept-Encoding': 'gzip, deflate',
-          'Connection': 'keep-alive',
-        },
-        timeout: 10000,
-      });
-
-      const $ = cheerio.load(response.data);
-      const results: WebScrapingResult[] = [];
-
-      $(site.selectors.articles || 'article').each((index, element) => {
-        if (index >= 10) return false; // Limit to 10 results per site
-
-        const $element = $(element);
-        const titleElement = site.selectors.title ? $element.find(site.selectors.title) : $element.find('h1, h2, h3, h4').first();
-        const contentElement = site.selectors.content ? $element.find(site.selectors.content) : $element.find('p').first();
-
-        const title = titleElement.text().trim();
-        const content = contentElement.text().trim();
-
-        if (title && content && this.isRelevantContent(title + ' ' + content, destination)) {
-          results.push({
-            url: this.resolveUrl(titleElement.attr('href') || url, site.baseUrl),
-            title,
-            content: this.cleanContent(content),
-            relevanceScore: this.calculateRelevance(title + ' ' + content, destination),
-            scrapedAt: new Date(),
-          });
-        }
-      });
-
-      return results;
-    } catch (error) {
-      console.error(`Failed to scrape ${url}:`, error);
-      return [];
-    }
-  }
-
-  private async searchTravelBlogs(destination: string, language: string = 'en'): Promise<WebScrapingResult[]> {
-    // Use Google Custom Search API if available, otherwise return empty array
-    if (!process.env.GOOGLE_SEARCH_API_KEY || !process.env.GOOGLE_SEARCH_ENGINE_ID) {
-      return [];
-    }
-
-    try {
-      const query = this.buildLocalizedSearchQuery(destination, language);
-      const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
-        params: {
-          key: process.env.GOOGLE_SEARCH_API_KEY,
-          cx: process.env.GOOGLE_SEARCH_ENGINE_ID,
-          q: query,
-          num: 10,
-          lr: this.getLanguageRestriction(language),
-          hl: language,
-        },
-      });
-
-      const results: WebScrapingResult[] = [];
-      
-      for (const item of response.data.items || []) {
-        if (this.isRelevantContent(item.title + ' ' + item.snippet, destination)) {
-          results.push({
-            url: item.link,
-            title: item.title,
-            content: item.snippet,
-            relevanceScore: this.calculateRelevance(item.title + ' ' + item.snippet, destination),
-            scrapedAt: new Date(),
-          });
-        }
-      }
-
-      return results;
-    } catch (error) {
-      console.error('Error searching travel blogs:', error);
-      return [];
-    }
-  }
-
-  private isRelevantContent(content: string, destination: string): boolean {
-    const lowerContent = content.toLowerCase();
-    const lowerDestination = destination.toLowerCase();
-    
-    // Check if content mentions the destination
-    if (!lowerContent.includes(lowerDestination)) {
-      // Also check for partial matches (city without country, etc.)
-      const destinationParts = lowerDestination.split(/[,\s]+/);
-      const hasPartialMatch = destinationParts.some(part => 
-        part.length > 2 && lowerContent.includes(part)
-      );
-      if (!hasPartialMatch) return false;
-    }
-
-    // Check for travel-related keywords
-    const travelKeywords = [
-      'travel', 'visit', 'trip', 'vacation', 'holiday', 'tourism', 'guide',
-      'attraction', 'restaurant', 'hotel', 'things to do', 'places to see',
-      'itinerary', 'experience', 'culture', 'food', 'sightseeing'
-    ];
-
-    return travelKeywords.some(keyword => lowerContent.includes(keyword));
-  }
-
-  private calculateRelevance(content: string, destination: string): number {
-    const lowerContent = content.toLowerCase();
-    const lowerDestination = destination.toLowerCase();
-    
-    let score = 0;
-
-    // Exact destination match
-    if (lowerContent.includes(lowerDestination)) {
-      score += 50;
-    }
-
-    // Partial destination matches
-    const destinationParts = lowerDestination.split(/[,\s]+/);
-    destinationParts.forEach(part => {
-      if (part.length > 2 && lowerContent.includes(part)) {
-        score += 20;
+        console.error(`Failed to process content from ${result.url}:`, error);
+        return null;
       }
     });
 
-    // Travel keywords
+    const processedResults = (await Promise.all(extractionPromises)).filter(Boolean) as WebScrapingResult[];
+
+    console.log(`Successfully processed ${processedResults.length} results.`);
+
+    return this.rankResults(processedResults);
+  }
+
+  async scrapeUrl(url: string): Promise<WebScrapingResult | null> {
+    console.log(`Starting single URL scrape for: ${url}`);
+    try {
+      const { data: htmlContent } = await axios.get(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        },
+        timeout: 15000,
+        maxRedirects: 5,
+      });
+
+      const $ = cheerio.load(htmlContent);
+      
+      // Remove script and style elements
+      $('script, style, noscript').remove();
+      
+      // Extract title
+      const pageTitle = $('title').text().trim() || $('h1').first().text().trim() || 'No title found';
+      
+      // Extract main content - try multiple selectors
+      let mainContent = '';
+      const contentSelectors = ['main', 'article', '.content', '#content', '.post', '.entry'];
+      
+      for (const selector of contentSelectors) {
+        const content = $(selector).text().trim();
+        if (content && content.length > mainContent.length) {
+          mainContent = content;
+        }
+      }
+      
+      // Fallback to body content if no specific content area found
+      if (!mainContent || mainContent.length < 100) {
+        mainContent = $('body').text();
+      }
+      
+      // Clean and limit content
+      mainContent = mainContent
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, 8000); // Increased limit for better analysis
+
+      if (!mainContent || mainContent.length < 50) {
+        console.log('Could not extract meaningful content from the page.');
+        return null;
+      }
+
+      console.log(`Extracted ${mainContent.length} characters of content. Analyzing with LLM...`);
+
+      // Improved prompt for single JSON object response
+      const shortContent = mainContent.substring(0, 1500);
+      
+      const extractionPrompt = `Analyze this web content for travel information. Return exactly one JSON object only.
+
+Content: "${shortContent}"
+
+Return only ONE JSON object with these fields:
+{
+  "title": "Create a specific travel-focused title based on the content (under 80 characters)",
+  "summary": "1-2 sentences summarizing the travel information",
+  "relevanceScore": 85
+}
+
+Important: 
+- Make the title specific to the location/attraction mentioned in the content
+- If it's about Tokyo, include "Tokyo" in the title
+- If it's about a specific place, include that place name
+- Return only the JSON object, no other text, no arrays, no explanations
+
+JSON:`;
+
+      const extractedJson = await llmService.chat([
+        { role: 'user', content: extractionPrompt },
+      ], { 
+        max_tokens: 120, // Further reduced to force concise response
+        temperature: 0.1  // Low temperature for consistent format
+      });
+
+      console.log('LLM response:', extractedJson);
+
+      // Enhanced JSON cleaning for vLLM responses
+      let cleanedJson = this.cleanLLMResponse(extractedJson);
+
+      let extractedData;
+      try {
+        extractedData = JSON.parse(cleanedJson);
+      } catch (parseError) {
+        console.error('JSON parsing failed:', parseError);
+        console.error('Original response:', extractedJson);
+        console.error('Cleaned response was:', cleanedJson);
+        
+        // Try alternative parsing method for vLLM
+        const alternativeParsing = this.extractJSONFromvLLMResponse(extractedJson);
+        if (alternativeParsing) {
+          extractedData = alternativeParsing;
+        } else {
+          // Fallback: create a basic result
+          return {
+            url: url,
+            title: pageTitle.substring(0, 80),
+            content: mainContent.substring(0, 300) + (mainContent.length > 300 ? '...' : ''),
+            relevanceScore: 50, // Default moderate relevance
+            scrapedAt: new Date(),
+          };
+        }
+      }
+
+      // Validate required fields
+      if (!extractedData.title || !extractedData.summary || typeof extractedData.relevanceScore !== 'number') {
+        console.error('Invalid LLM response structure:', extractedData);
+        return null;
+      }
+
+      return {
+        url: url,
+        title: extractedData.title,
+        content: extractedData.summary,
+        relevanceScore: Math.max(0, Math.min(100, extractedData.relevanceScore)), // Ensure score is between 0-100
+        scrapedAt: new Date(),
+        originalContent: mainContent.substring(0, 2000), // Include original content for reference
+      };
+      
+    } catch (error) {
+      console.error(`Failed to scrape URL ${url}:`, error);
+      
+      if (error instanceof Error) {
+        if (error.message.includes('timeout')) {
+          console.error('Request timed out');
+        } else if (error.message.includes('Network Error')) {
+          console.error('Network error occurred');
+        }
+      }
+      
+      return null;
+    }
+  }
+
+  private cleanLLMResponse(response: string): string {
+    let cleaned = response.trim();
+    
+    // Remove common vLLM response patterns
+    cleaned = cleaned.replace(/^.*?JSON:\s*/i, ''); // Remove "JSON:" prefix
+    cleaned = cleaned.replace(/^.*?response:\s*/i, ''); // Remove "response:" prefix
+    cleaned = cleaned.replace(/^.*?```json\s*/i, ''); // Remove ```json
+    cleaned = cleaned.replace(/\s*```.*$/i, ''); // Remove closing ```
+    
+    // Handle array responses - extract first object
+    if (cleaned.startsWith('[')) {
+      const match = cleaned.match(/\[\s*(\{[^}]*\})/);
+      if (match) {
+        cleaned = match[1];
+      }
+    }
+    
+    // Ensure we have a valid JSON object
+    if (!cleaned.startsWith('{')) {
+      const jsonMatch = cleaned.match(/\{[^}]*\}/);
+      if (jsonMatch) {
+        cleaned = jsonMatch[0];
+      }
+    }
+    
+    return cleaned.trim();
+  }
+
+  private extractJSONFromvLLMResponse(response: string): any | null {
+    try {
+      // Handle array responses first
+      if (response.includes('[') && response.includes(']')) {
+        const arrayMatch = response.match(/\[\s*(\{[^}]*\})/);
+        if (arrayMatch) {
+          try {
+            return JSON.parse(arrayMatch[1]);
+          } catch (e) {
+            // Continue to other methods
+          }
+        }
+      }
+
+      // First try to find a complete JSON object
+      const jsonMatch = response.match(/\{[^{}]*"title"[^{}]*"summary"[^{}]*"relevanceScore"[^{}]*\}/i);
+      if (jsonMatch) {
+        try {
+          return JSON.parse(jsonMatch[0]);
+        } catch (e) {
+          // Continue to manual extraction
+        }
+      }
+
+      // Try to manually extract fields if JSON parsing fails
+      const titleMatch = response.match(/"title"\s*:\s*"([^"]+)"/i);
+      const summaryMatch = response.match(/"summary"\s*:\s*"([^"]+)"/i);
+      const scoreMatch = response.match(/"relevanceScore"\s*:\s*(\d+)/i);
+
+      if (titleMatch && summaryMatch) {
+        return {
+          title: titleMatch[1],
+          summary: summaryMatch[1],
+          relevanceScore: scoreMatch ? parseInt(scoreMatch[1]) : 50
+        };
+      }
+
+      // If all else fails, create from the response text
+      const lines = response.split('\n').filter(line => line.trim().length > 10);
+      if (lines.length > 0) {
+        return {
+          title: lines[0].substring(0, 80).replace(/[^a-zA-Z0-9\s]/g, ''),
+          summary: lines.slice(0, 2).join(' ').substring(0, 200),
+          relevanceScore: 40
+        };
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Alternative JSON extraction failed:', error);
+      return null;
+    }
+  }
+
+  private extractTitleFromContent(content: string, pageTitle: string): string {
+    // Extract a meaningful title from content or page title
+    if (pageTitle && pageTitle.length > 5 && pageTitle !== 'No title found') {
+      return pageTitle.substring(0, 80);
+    }
+    
+    // Try to find a title-like sentence in the content
+    const sentences = content.split(/[.!?]/);
+    for (const sentence of sentences.slice(0, 3)) {
+      const clean = sentence.trim();
+      if (clean.length > 10 && clean.length < 80) {
+        return clean;
+      }
+    }
+    
+    return content.substring(0, 60).trim() + '...';
+  }
+
+  private createFallbackSummary(content: string, llmResponse: string): string {
+    // Try to use LLM response if it contains meaningful content
+    if (llmResponse && llmResponse.length > 20 && !llmResponse.includes('JSON')) {
+      const cleaned = llmResponse.replace(/[{}"\[\]]/g, '').trim();
+      if (cleaned.length > 20) {
+        return cleaned.substring(0, 200);
+      }
+    }
+    
+    // Create summary from content
+    const sentences = content.split(/[.!?]/).filter(s => s.trim().length > 10);
+    const summary = sentences.slice(0, 2).join('. ').trim();
+    return summary.length > 20 ? summary.substring(0, 200) : content.substring(0, 200);
+  }
+
+  private estimateRelevance(content: string): number {
     const travelKeywords = [
-      'travel guide', 'things to do', 'places to visit', 'attractions',
-      'restaurants', 'hotels', 'itinerary', 'tips', 'experience'
+      'travel', 'visit', 'trip', 'tourism', 'hotel', 'restaurant', 'attraction',
+      'guide', 'vacation', 'destination', 'culture', 'food', 'sightseeing'
     ];
     
-    travelKeywords.forEach(keyword => {
+    const lowerContent = content.toLowerCase();
+    let score = 20; // Base score
+    
+    for (const keyword of travelKeywords) {
       if (lowerContent.includes(keyword)) {
         score += 10;
       }
-    });
-
-    return Math.min(score, 100); // Cap at 100
+    }
+    
+    return Math.min(score, 100);
   }
 
-  private cleanContent(content: string): string {
-    return content
-      .replace(/\s+/g, ' ')
-      .replace(/\n+/g, ' ')
-      .trim()
-      .substring(0, 500); // Limit content length
-  }
-
-  private resolveUrl(url: string, baseUrl?: string): string {
-    if (url.startsWith('http')) {
-      return url;
-    }
-    if (url.startsWith('/') && baseUrl) {
-      return baseUrl + url;
-    }
-    return url;
+  private async performMockSearch(query: string, destination: string): Promise<{ url: string; content: string }[]> {
+    // This is a mock implementation. Replace with a real search API call.
+    console.warn('Using mock search results. Integrate a real search API for production use.');
+    const cityName = destination.split(',')[0]?.trim() || destination;
+    return [
+      {
+        url: `https://example.com/travel-guide-${cityName.toLowerCase()}`,
+        content: `The Ultimate Guide to Visiting ${cityName}. Explore top attractions like the Grand Plaza and the historic Old Town. Find the best local restaurants and hidden gems. Our guide covers everything from transport to accommodation.`,
+      },
+      {
+        url: `https://example.com/food-in-${cityName.toLowerCase()}`,
+        content: `A food lover’s journey through ${cityName}. Discover the must-try dishes, from street food stalls to fine dining experiences. We review the top 5 restaurants for authentic local cuisine.`,
+      },
+      {
+        url: `https://en.wikipedia.org/wiki/${cityName}`,
+        content: `${cityName} is a major city in the region, known for its rich history and cultural heritage. The city has a population of over 1 million people and is a major economic hub.`,
+      },
+    ];
   }
 
   private rankResults(results: WebScrapingResult[]): WebScrapingResult[] {
     return results
       .sort((a, b) => b.relevanceScore - a.relevanceScore)
-      .slice(0, 20); // Return top 20 results
-  }
-
-  // Alternative method using Puppeteer for JavaScript-heavy sites
-  async scrapeWithPuppeteer(url: string): Promise<string> {
-    // This would require Puppeteer setup
-    // For now, return empty string as fallback
-    console.log('Puppeteer scraping not implemented yet for:', url);
-    return '';
-  }
-
-  // Localization helper methods
-  private getLocalizedDestination(destination: string, language: string): string {
-    // For now, return the original destination
-    // In a full implementation, you might translate city names
-    return destination;
-  }
-
-  private getAcceptLanguageHeader(language: string): string {
-    const languageHeaders: Record<string, string> = {
-      'en': 'en-US,en;q=0.9',
-      'es': 'es-ES,es;q=0.9,en;q=0.8',
-      'fr': 'fr-FR,fr;q=0.9,en;q=0.8',
-      'de': 'de-DE,de;q=0.9,en;q=0.8',
-      'ja': 'ja-JP,ja;q=0.9,en;q=0.8',
-      'ko': 'ko-KR,ko;q=0.9,en;q=0.8',
-    };
-    return languageHeaders[language] || 'en-US,en;q=0.9';
-  }
-
-  private getLanguageRestriction(language: string): string {
-    const restrictions: Record<string, string> = {
-      'en': 'lang_en',
-      'es': 'lang_es',
-      'fr': 'lang_fr',
-      'de': 'lang_de',
-      'ja': 'lang_ja',
-      'ko': 'lang_ko',
-    };
-    return restrictions[language] || 'lang_en';
-  }
-
-  private buildLocalizedSearchQuery(destination: string, language: string): string {
-    const searchTerms: Record<string, string[]> = {
-      'en': ['travel guide', 'blog', 'tips', 'visit'],
-      'es': ['guía de viaje', 'blog', 'consejos', 'visitar'],
-      'fr': ['guide de voyage', 'blog', 'conseils', 'visiter'],
-      'de': ['reiseführer', 'blog', 'tipps', 'besuchen'],
-      'ja': ['旅行ガイド', 'ブログ', 'ヒント', '訪問'],
-      'ko': ['여행 가이드', '블로그', '팁', '방문'],
-    };
-
-    const terms = searchTerms[language] || searchTerms['en'];
-    return `${destination} ${terms.join(' ')}`;
-  }
-
-  private generateMockResults(destination: string, language: string): WebScrapingResult[] {
-    const translations = this.getMockTranslations(language);
-    const cityName = destination.split(',')[0]?.trim() || destination;
-
-    return [
-      {
-        url: `https://example.com/travel-guide-${cityName.toLowerCase().replace(/\s+/g, '-')}`,
-        title: `${translations.completeGuide} ${destination}`,
-        content: `${translations.guideContent1} ${destination}. ${translations.guideContent2} ${cityName} ${translations.guideContent3}`,
-        relevanceScore: 95,
-        scrapedAt: new Date(),
-      },
-      {
-        url: `https://example.com/top-attractions-${cityName.toLowerCase().replace(/\s+/g, '-')}`,
-        title: `${translations.topAttractions} ${cityName}`,
-        content: `${translations.attractionsContent1} ${cityName}. ${translations.attractionsContent2} ${destination} ${translations.attractionsContent3}`,
-        relevanceScore: 90,
-        scrapedAt: new Date(),
-      },
-      {
-        url: `https://example.com/food-guide-${cityName.toLowerCase().replace(/\s+/g, '-')}`,
-        title: `${translations.foodGuide} ${destination}`,
-        content: `${translations.foodContent1} ${cityName} ${translations.foodContent2} ${destination} ${translations.foodContent3}`,
-        relevanceScore: 85,
-        scrapedAt: new Date(),
-      },
-      {
-        url: `https://example.com/travel-tips-${cityName.toLowerCase().replace(/\s+/g, '-')}`,
-        title: `${translations.travelTips} ${destination}`,
-        content: `${translations.tipsContent1} ${destination}. ${translations.tipsContent2} ${cityName} ${translations.tipsContent3}`,
-        relevanceScore: 80,
-        scrapedAt: new Date(),
-      },
-      {
-        url: `https://example.com/budget-travel-${cityName.toLowerCase().replace(/\s+/g, '-')}`,
-        title: `${translations.budgetTravel} ${destination}`,
-        content: `${translations.budgetContent1} ${destination} ${translations.budgetContent2} ${cityName} ${translations.budgetContent3}`,
-        relevanceScore: 75,
-        scrapedAt: new Date(),
-      }
-    ];
-  }
-
-  private getMockTranslations(language: string): Record<string, string> {
-    const translations: Record<string, Record<string, string>> = {
-      'en': {
-        completeGuide: 'Complete Travel Guide to',
-        guideContent1: 'Discover the best attractions, restaurants, and hidden gems in',
-        guideContent2: 'This comprehensive guide covers everything you need to know about visiting',
-        guideContent3: 'including local customs, transportation, and must-see sights.',
-        topAttractions: 'Top 10 Must-Visit Attractions in',
-        attractionsContent1: 'Explore the most popular tourist destinations and landmarks in',
-        attractionsContent2: 'From historic sites to modern attractions,',
-        attractionsContent3: 'offers something for every type of traveler.',
-        foodGuide: 'Ultimate Food Guide for',
-        foodContent1: 'Experience the local cuisine and food culture of',
-        foodContent2: 'From street food to fine dining,',
-        foodContent3: 'offers an incredible culinary journey for food lovers.',
-        travelTips: 'Essential Travel Tips for',
-        tipsContent1: 'Get insider tips and practical advice for your trip to',
-        tipsContent2: 'Learn about local customs, transportation options, and how to make the most of your visit to',
-        tipsContent3: 'with these expert recommendations.',
-        budgetTravel: 'Budget Travel Guide to',
-        budgetContent1: 'Discover how to explore',
-        budgetContent2: 'on a budget. Find affordable accommodations, cheap eats, and free activities in',
-        budgetContent3: 'without breaking the bank.'
-      },
-      'ko': {
-        completeGuide: '완벽한 여행 가이드',
-        guideContent1: '최고의 명소, 레스토랑, 숨겨진 보석들을 발견하세요',
-        guideContent2: '이 종합 가이드는 방문에 대해 알아야 할 모든 것을 다룹니다',
-        guideContent3: '현지 관습, 교통수단, 필수 관광지를 포함하여.',
-        topAttractions: '꼭 방문해야 할 톱 10 명소',
-        attractionsContent1: '가장 인기 있는 관광지와 랜드마크를 탐험하세요',
-        attractionsContent2: '역사적 장소부터 현대적 명소까지,',
-        attractionsContent3: '모든 유형의 여행자를 위한 무언가를 제공합니다.',
-        foodGuide: '궁극의 음식 가이드',
-        foodContent1: '현지 요리와 음식 문화를 경험하세요',
-        foodContent2: '길거리 음식부터 고급 식당까지,',
-        foodContent3: '음식 애호가들을 위한 놀라운 요리 여행을 제공합니다.',
-        travelTips: '필수 여행 팁',
-        tipsContent1: '여행을 위한 내부자 팁과 실용적인 조언을 얻으세요',
-        tipsContent2: '현지 관습, 교통 옵션, 그리고 방문을 최대한 활용하는 방법을 배우세요',
-        tipsContent3: '이 전문가 추천과 함께.',
-        budgetTravel: '예산 여행 가이드',
-        budgetContent1: '탐험하는 방법을 발견하세요',
-        budgetContent2: '예산으로. 저렴한 숙박시설, 싼 음식, 무료 활동을 찾으세요',
-        budgetContent3: '돈을 많이 쓰지 않고도.'
-      }
-    };
-
-    return translations[language] || translations['en'];
+      .slice(0, 10); // Return top 10 results
   }
 }
 

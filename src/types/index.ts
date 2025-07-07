@@ -139,6 +139,7 @@ export interface WebScrapingResult {
   content: string;
   relevanceScore: number;
   scrapedAt: Date;
+  originalContent?: string; // Original content for reference
 }
 
 export interface ImageResult {
